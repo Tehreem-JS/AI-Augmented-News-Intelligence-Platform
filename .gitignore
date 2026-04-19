@@ -1,0 +1,26 @@
+
+# 1. Environment Variables / Secrets (CRITICAL)
+.env
+secret.key
+*.env
+
+# 2. Python Environment & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.venv/
+.pytest_cache/
+
+# 3. Database Files (Local backups/logs)
+*.log
+*.sqlite3
+# Only ignore .sql if you don't want to share your schema exports
+# dump.sql 
+
+# 4. OS / IDE Specific
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

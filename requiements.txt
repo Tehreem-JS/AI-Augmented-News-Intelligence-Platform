@@ -1,0 +1,40 @@
+# Tech News Analyst - Backend Dependencies
+# Python 3.11+
+
+# FastAPI and server
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+
+# Database
+asyncpg==0.29.0
+psycopg2-binary==2.9.9
+
+# HTTP requests
+aiohttp==3.9.1
+requests==2.31.0
+
+# RSS/Web scraping
+feedparser==6.0.11
+beautifulsoup4==4.12.3
+lxml==5.1.0
+
+# NLP and clustering
+scikit-learn==1.4.0
+numpy==1.26.3
+
+# Date handling
+python-dateutil==2.8.2
+pytz==2024.1
+
+# Scheduling
+APScheduler==3.10.4
+
+# Environment
+python-dotenv==1.0.1
+
+# Data validation
+pydantic==2.5.3
+
+# CORS
+fastapi-cors==0.0.6

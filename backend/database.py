@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 import json
 from dotenv import load_dotenv
 import os
+from datetime import datetime, timedelta, timezone
 
 load_dotenv()
 
@@ -300,8 +301,8 @@ class Database:
         Returns:
             Tuple of (briefs_list, days_used)
         """
-        end_date = datetime.now()
-        
+        end_date = datetime.now(timezone.utc)        
+
         # Time windows to try (in days)
         time_windows = [1, 2, 7, 30]
         

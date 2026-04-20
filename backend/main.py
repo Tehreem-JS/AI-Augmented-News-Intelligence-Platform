@@ -10,7 +10,7 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta,timezone
 import asyncio
 from contextlib import asynccontextmanager
 
@@ -40,6 +40,7 @@ async def lifespan(app: FastAPI):
     # Shutdown
     print(" Shutting down...")
     scheduler.shutdown()
+    await fetcher.close()
     await db.disconnect()
 
 # Initialize FastAPI app
@@ -156,7 +157,7 @@ async def get_dashboard(
         # Step 1: Fetch briefs with adaptive time window
         briefs, days_used = await db.adaptive_get_briefs(
             category_filter=topic,
-            min_briefs=10
+            min_briefs=5
         )
         
         # If no briefs exist at all, trigger collection
@@ -164,11 +165,12 @@ async def get_dashboard(
             await collect_and_process_news()
             briefs, days_used = await db.adaptive_get_briefs(
                 category_filter=topic,
-                min_briefs=10
+                min_briefs=5
             )
         
-        # Step 2: Add relative time to each brief
-        now = datetime.now()
+       
+        from datetime import timezone
+        now = datetime.now(timezone.utc)
         for brief in briefs:
             brief.relative_time = db.calculate_relative_time(brief.created_at)
         
@@ -193,8 +195,9 @@ async def get_dashboard(
         system_status = await _get_system_status(days_used, len(sorted_briefs))
         
         # Step 8: Get total articles count
-        end_date = datetime.now()
+        end_date = datetime.now(timezone.utc)
         start_date = end_date - timedelta(days=days_used)
+        
         total_articles = await db.get_articles_count(start_date, end_date)
         
         # Step 9: Generate greeting
@@ -230,7 +233,9 @@ def _categorize_briefs_by_time(briefs: List[NewsBrief]) -> List[TimeTier]:
     - This Week: 2-7 days ago
     - Recent: 8-30 days ago
     """
-    now = datetime.now()
+
+
+    now =datetime.now(timezone.utc)
     
     breaking = []  # Last 24 hours
     this_week = []  # 2-7 days
@@ -270,7 +275,6 @@ def _categorize_briefs_by_time(briefs: List[NewsBrief]) -> List[TimeTier]:
         ))
     
     return tiers
-
 
 async def _get_system_status(days_used: int, total_briefs: int) -> SystemStatus:
     """
@@ -371,7 +375,8 @@ async def search_news(
 ):
     """Search news briefs by keyword"""
     try:
-        end_date = datetime.now()
+        end_date = datetime.now(timezone.utc)
+
         start_date = end_date - timedelta(days=days)
         
         results = await db.search_briefs(query, start_date, end_date)

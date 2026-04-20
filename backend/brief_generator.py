@@ -2,7 +2,7 @@
 import os
 from typing import Dict, Any, List
 import json
-from datetime import datetime
+from datetime import datetime, timedelta,timezone
 import asyncio  
 
 class BriefGenerator:
@@ -26,7 +26,7 @@ class BriefGenerator:
             print("   Set environment variable or configure in brief_generator.py")
             print("   Brief generation will fail without a valid API key.")
         
-        self.model =  "llama-3.1-8b-instant" # or "llama-3.3-70b-versatile" 
+        self.model =   "llama-3.3-70b-versatile" #"llama-3.1-8b-instant" # or
         self.api_url = "https://api.groq.com/openai/v1/chat/completions"
     
     async def generate_brief(self, cluster: Dict[str, Any]) -> Dict[str, Any]:
@@ -83,7 +83,7 @@ class BriefGenerator:
                 "technical_glossary": brief_data.get("technical_glossary"),
                 "examples": brief_data.get("examples"),
                 "categories": cluster["category"],
-                "created_at": datetime.now(),
+                "created_at": datetime.now(timezone.utc),
                 "articles_count": len(articles),
                 "article_ids": [a["article_id"] for a in articles]
             }
@@ -281,7 +281,7 @@ Respond ONLY with the JSON object, no markdown formatting, no explanation."""
             "technical_glossary": None,
             "examples": None,
             "categories": cluster["category"],
-            "created_at": datetime.now(),
+            "created_at": datetime.now(timezone.utc),
             "articles_count": len(articles),
             "article_ids": [a.get("article_id", str(i)) for i, a in enumerate(articles)]
         }

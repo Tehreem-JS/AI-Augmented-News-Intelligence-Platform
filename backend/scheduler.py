@@ -31,41 +31,23 @@ class NewsScheduler:
         
         self.scheduler = AsyncIOScheduler()
         self._configure_jobs()
-    
     def _configure_jobs(self):
-        """Configure scheduled jobs"""
-        
-        # Daily news collection at 6:00 AM ET
-        self.scheduler.add_job(
-            self.daily_collection,
-            CronTrigger(hour=6, minute=0, timezone="US/Eastern"),
-            id="daily_collection",
-            name="Daily News Collection",
-            replace_existing=True
-        )
-        
-        # Refresh at 12:00 PM ET (midday update)
-        self.scheduler.add_job(
-            self.daily_collection,
-            CronTrigger(hour=12, minute=0, timezone="US/Eastern"),
-            id="midday_refresh",
-            name="Midday News Refresh",
-            replace_existing=True
-        )
-        
-        # Evening update at 6:00 PM ET
-        self.scheduler.add_job(
-            self.daily_collection,
-            CronTrigger(hour=18, minute=0, timezone="US/Eastern"),
-            id="evening_refresh",
-            name="Evening News Refresh",
-            replace_existing=True
-        )
-        
-        print("📅 Scheduled jobs configured:")
-        print("   - Daily collection: 6:00 AM ET")
-        print("   - Midday refresh: 12:00 PM ET")
-        print("   - Evening refresh: 6:00 PM ET")
+        times = [0, 6, 12, 18]  # 12AM, 6AM, 12PM, 6PM
+    
+        for hour in times:
+            label = f"{hour:02d}:00"
+            self.scheduler.add_job(
+                self.daily_collection,
+                CronTrigger(hour=hour, minute=0, timezone="America/New_York"),
+                id=f"collection_{hour}",
+                name=f"News Collection {label} ET",
+                replace_existing=True
+            )
+    
+    print("📅 Scheduled jobs configured: 12:00 AM, 6:00 AM, 12:00 PM, 6:00 PM ET")
+
+
+   
     
     def start(self):
         """Start the scheduler"""

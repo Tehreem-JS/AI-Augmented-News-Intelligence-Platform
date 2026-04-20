@@ -32,6 +32,8 @@ class NewsProcessor:
         self.seen_hashes = set()
     
     def clean_and_normalize(self, raw_articles: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        self.seen_urls = set()   # ✅ reset at start of each run
+        self.seen_hashes = set()    
         """
         Clean and normalize all articles
         
@@ -219,7 +221,7 @@ class NewsProcessor:
     def _convert_to_et(self, pub_date: Any) -> datetime:
         """Convert publication date to Eastern Time"""
         if not pub_date:
-            return datetime.now(pytz.timezone("US/Eastern"))
+            return datetime.now(pytz.timezone("America/New_York"))
         
         # If already datetime
         if isinstance(pub_date, datetime):
@@ -228,16 +230,16 @@ class NewsProcessor:
             # Try to parse string
             try:
                 dt = date_parser.parse(str(pub_date))
-            except:
-                return datetime.now(pytz.timezone("US/Eastern"))
+            except (ValueError, OverflowError):  # 
+                return datetime.now(pytz.timezone("America/New_York"))  
         
         # Ensure timezone aware
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
         
         # Convert to ET
-        et_tz = pytz.timezone("US/Eastern")
-        dt_et = dt.astimezone(et_tz)
+        et_tz = pytz.timezone("America/New_York")
+        dt_et = dt.astimezone(pytz.timezone("America/New_York"))
         
         return dt_et
     

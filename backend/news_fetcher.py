@@ -146,7 +146,7 @@ class NewsFetcher:
                 if time_tuple:
                     try:
                         return datetime(*time_tuple[:6], tzinfo=timezone.utc)
-                    except:
+                    except (ValueError, TypeError, OverflowError):  # ✅
                         pass
         
         # Fallback to current time
